@@ -1,0 +1,16 @@
+{% extends 'matcher/base.html' %}
+{% block content %}
+<section class="admin-layout">
+  <aside class="glass-card sidebar">
+    <h3>Admin Panel</h3>
+    <a href="/admin">Dashboard</a>
+    <a href="/admin/users">Users</a>
+    <a href="/admin/analyses" class="active">Resume Analyses</a>
+  </aside>
+
+  <article class="glass-card section-card">
+    <h1>Resume Analyses</h1>
+    <div id="admin-analyses-list" class="stack-sm mt-2"></div>
+  </article>
+</section>
+{% endblock %}

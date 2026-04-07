@@ -1,0 +1,24 @@
+{% extends 'matcher/base.html' %}
+{% block content %}
+<section class="wide-page stack">
+  <article class="glass-card section-card">
+    <h1 id="dashboard-title">Welcome</h1>
+    <p class="muted">Track your latest resume analyses and recommendation history.</p>
+    <div class="stats-grid mt-2">
+      <div class="stat-card"><p class="muted">Analyses</p><p id="stat-analyses" class="stat-value">0</p></div>
+      <div class="stat-card"><p class="muted">Avg Match Score</p><p id="stat-avg-score" class="stat-value">0%</p></div>
+      <div class="stat-card"><p class="muted">Recommended Jobs</p><p id="stat-jobs" class="stat-value">0</p></div>
+    </div>
+    <div class="row gap mt-2 wrap">
+      <a href="/analyzer" class="cta-btn">Match New Resume</a>
+      <a href="/analytics" class="subtle-btn">Open Analytics</a>
+      <a href="/profile" class="subtle-btn">View Profile</a>
+    </div>
+  </article>
+
+  <article class="glass-card section-card">
+    <h2>History</h2>
+    <div id="dashboard-history" class="stack-sm"></div>
+  </article>
+</section>
+{% endblock %}

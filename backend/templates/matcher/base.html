@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ page_title }} | Intelligent Job Matcher</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'matcher/css/app.css' %}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" defer></script>
+  <script src="{% static 'matcher/js/app.js' %}" defer></script>
+</head>
+<body data-page="{{ page_key }}" class="bg-stage">
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <header class="site-header">
+    <div class="nav-shell">
+      <a href="/" class="brand">Intelligent Job Matcher</a>
+      <nav class="top-nav" id="top-nav">
+        <a href="/">Home</a>
+        <a href="/analyzer">Match Jobs</a>
+        <a href="/job-roles">Job Roles</a>
+        <a href="/dashboard" data-auth-only="true">Dashboard</a>
+        <a href="/analytics" data-auth-only="true">Analytics</a>
+        <a href="/profile" data-auth-only="true">Profile</a>
+        <a href="/admin" data-admin-only="true">Admin</a>
+      </nav>
+      <div class="auth-actions">
+        <a href="/login" class="subtle-btn" data-guest-only="true">Login</a>
+        <a href="/signup" class="cta-btn" data-guest-only="true">Sign Up</a>
+        <button type="button" class="subtle-btn" id="logout-btn" data-auth-only="true">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-wrap page-enter">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

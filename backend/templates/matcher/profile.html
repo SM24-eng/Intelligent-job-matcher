@@ -1,0 +1,25 @@
+{% extends 'matcher/base.html' %}
+{% block content %}
+<section class="wide-page stack">
+  <article class="glass-card section-card">
+    <div class="row space-between wrap">
+      <div>
+        <h1 id="profile-name">User</h1>
+        <p id="profile-email" class="muted">No email</p>
+      </div>
+      <a href="/analyzer" class="cta-btn">New Analysis</a>
+    </div>
+  </article>
+
+  <div class="stats-grid">
+    <div class="stat-card"><p class="muted">Total Analyses</p><p id="profile-analyses" class="stat-value">0</p></div>
+    <div class="stat-card"><p class="muted">Top Role</p><p id="profile-top-role" class="stat-value small">None</p></div>
+    <div class="stat-card"><p class="muted">Best Match Score</p><p id="profile-best-score" class="stat-value">0%</p></div>
+  </div>
+
+  <article class="glass-card section-card">
+    <h2>Recent Analyses</h2>
+    <div id="profile-history" class="stack-sm"></div>
+  </article>
+</section>
+{% endblock %}

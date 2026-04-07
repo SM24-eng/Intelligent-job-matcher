@@ -1,0 +1,65 @@
+{% extends 'matcher/base.html' %}
+{% block content %}
+<section class="wide-page">
+  <article class="glass-card section-card">
+    <p class="pill">Transparent Explainability Report</p>
+    <h1 id="explain-title">Why this role was selected</h1>
+    <p class="muted" id="explain-subtitle"></p>
+    <div class="row gap mt-2">
+      <button class="cta-btn" id="download-report" type="button">Download PDF Report</button>
+      <span class="status-chip" id="explain-save-status">Persistence: Local only</span>
+    </div>
+  </article>
+
+  <div id="explain-empty" class="glass-card section-card hidden">
+    <h2>No Explainability Data Yet</h2>
+    <p class="muted">Run a resume analysis first, then open explainability from a job card.</p>
+    <a href="/analyzer" class="cta-btn mt-1 inline">Analyze Resume</a>
+  </div>
+
+  <div id="explain-content" class="stack hidden">
+    <article class="glass-card section-card">
+      <h2>Selection Reasons</h2>
+      <div id="narrative-list" class="stack-sm"></div>
+    </article>
+
+    <article class="glass-card section-card">
+      <h2>Score Pipeline</h2>
+      <div class="stats-grid" id="pipeline-grid"></div>
+    </article>
+
+    <article class="glass-card section-card">
+      <h2>Factor Contributions</h2>
+      <canvas id="factor-chart" height="120"></canvas>
+    </article>
+
+    <article class="glass-card section-card">
+      <h2>Skills Transparency</h2>
+      <div class="split">
+        <div>
+          <p class="muted">Matched Skills</p>
+          <div id="matched-skills" class="chip-wrap"></div>
+        </div>
+        <div>
+          <p class="muted">Missing Skills</p>
+          <div id="missing-skills" class="chip-wrap"></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="glass-card section-card">
+      <h2>Comparison Mode</h2>
+      <div class="row gap wrap">
+        <label for="compare-job">Compare with:</label>
+        <select id="compare-job" class="soft-input compact"></select>
+      </div>
+      <canvas id="comparison-chart" height="120"></canvas>
+    </article>
+
+    <article class="glass-card section-card">
+      <h2>Recent Explainability History</h2>
+      <div id="history-list" class="stack-sm"></div>
+    </article>
+  </div>
+</section>
+{% endblock %}

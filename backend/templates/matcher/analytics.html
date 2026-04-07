@@ -1,0 +1,31 @@
+{% extends 'matcher/base.html' %}
+{% block content %}
+<section class="wide-page stack">
+  <article class="glass-card section-card">
+    <h1>Analytics Hub</h1>
+    <p class="muted">Visual insights from your resume analyses, including trend and role distribution.</p>
+  </article>
+
+  <div id="analytics-empty" class="glass-card section-card hidden">
+    <p>No analytics yet. Run at least one resume analysis to unlock charts.</p>
+    <a href="/analyzer" class="cta-btn mt-1 inline">Analyze Resume</a>
+  </div>
+
+  <div id="analytics-content" class="grid-two hidden">
+    <article class="glass-card section-card">
+      <h2>Analysis Trend</h2>
+      <canvas id="trend-chart" height="180"></canvas>
+    </article>
+
+    <article class="glass-card section-card">
+      <h2>Role Distribution</h2>
+      <canvas id="role-chart" height="180"></canvas>
+    </article>
+
+    <article class="glass-card section-card span-two">
+      <h2>Average Match Quality</h2>
+      <canvas id="quality-chart" height="120"></canvas>
+    </article>
+  </div>
+</section>
+{% endblock %}

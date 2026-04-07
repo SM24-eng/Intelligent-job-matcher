@@ -1,0 +1,26 @@
+{% extends 'matcher/base.html' %}
+{% block content %}
+<section class="admin-layout">
+  <aside class="glass-card sidebar">
+    <h3>Admin Panel</h3>
+    <a href="/admin" class="active">Dashboard</a>
+    <a href="/admin/users">Users</a>
+    <a href="/admin/analyses">Resume Analyses</a>
+  </aside>
+
+  <div class="stack">
+    <article class="glass-card section-card">
+      <div class="stats-grid">
+        <div class="stat-card"><p class="muted">Total Users</p><p class="stat-value" id="admin-total-users">0</p></div>
+        <div class="stat-card"><p class="muted">Total Analyses</p><p class="stat-value" id="admin-total-analyses">0</p></div>
+        <div class="stat-card"><p class="muted">System Status</p><p class="stat-value">Healthy</p></div>
+      </div>
+    </article>
+
+    <article class="glass-card section-card">
+      <h2>Recent Activity</h2>
+      <div id="admin-recent" class="stack-sm"></div>
+    </article>
+  </div>
+</section>
+{% endblock %}

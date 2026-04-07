@@ -1,0 +1,24 @@
+{% extends 'matcher/base.html' %}
+{% block content %}
+<section class="narrow-page">
+  <article class="glass-card form-card">
+    <h1>Create Account</h1>
+    <p class="muted">Start your AI-powered resume journey.</p>
+
+    <form id="signup-form" class="form-stack">
+      <label>Name</label>
+      <input class="soft-input" id="signup-name" type="text" required />
+      <label>Email</label>
+      <input class="soft-input" id="signup-email" type="email" required />
+      <label>Password</label>
+      <input class="soft-input" id="signup-password" type="password" required />
+      <label>Confirm Password</label>
+      <input class="soft-input" id="signup-confirm" type="password" required />
+      <p id="signup-error" class="error hidden"></p>
+      <button class="cta-btn" type="submit" id="signup-submit">Sign Up</button>
+    </form>
+
+    <p class="muted center">Already have an account? <a href="/login">Login</a></p>
+  </article>
+</section>
+{% endblock %}

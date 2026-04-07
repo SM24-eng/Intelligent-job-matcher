@@ -1,0 +1,17 @@
+{% extends 'matcher/base.html' %}
+{% block content %}
+<section class="wide-page">
+  <header class="section-header">
+    <h1>Top 5 Job Matches</h1>
+    <p class="muted">Ranked by hybrid score: semantic fit, skill overlap, experience alignment, and role intent.</p>
+  </header>
+
+  <div id="results-empty" class="glass-card section-card hidden">
+    <h2>No Results Yet</h2>
+    <p class="muted">Analyze a resume first to view your top job recommendations.</p>
+    <a href="/analyzer" class="cta-btn mt-1 inline">Go to Analyzer</a>
+  </div>
+
+  <div id="results-grid" class="card-grid"></div>
+</section>
+{% endblock %}

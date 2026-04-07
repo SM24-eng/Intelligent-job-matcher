@@ -1,0 +1,35 @@
+{% extends 'matcher/base.html' %}
+{% block content %}
+<section class="wide-page">
+  <article class="glass-card section-card">
+    <h1>Available Job Roles</h1>
+    <p class="muted" id="job-roles-count">Distinct roles available in database: {{ roles_count }}</p>
+  </article>
+
+  <article class="glass-card section-card">
+    <form id="job-role-form" class="form-stack" style="max-width: 520px;">
+      <label for="job-role-name">Add New Role</label>
+      <input id="job-role-name" class="soft-input" type="text" placeholder="e.g. Backend Developer" required />
+      <p id="job-role-error" class="error hidden"></p>
+      <button type="submit" class="cta-btn">Add Role</button>
+    </form>
+  </article>
+
+  <article class="glass-card section-card">
+    <div id="job-roles-list" class="stack-sm">
+      {% if load_error %}
+      <p class="error">{{ load_error }}</p>
+      {% elif roles %}
+      {% for role in roles %}
+      <div class="stat-card row space-between wrap gap">
+        <span>{{ role }}</span>
+        <button type="button" class="subtle-btn" data-role-delete="{{ role|escape }}">Delete</button>
+      </div>
+      {% endfor %}
+      {% else %}
+      <p class="muted">No roles found in database yet.</p>
+      {% endif %}
+    </div>
+  </article>
+</section>
+{% endblock %}

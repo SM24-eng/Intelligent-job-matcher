@@ -6,7 +6,59 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from datetime import datetime
 from .hybrid_service import run_hybrid_matching
-from .utils import explainability_collection
+from .utils import (
+    analyses_collection,
+    explainability_collection,
+    job_roles_collection,
+    jobs_collection,
+    users_collection,
+)
+
+
+def _is_admin(request):
+    return getattr(request.user, "role", "user") == "admin"
+
+
+def _sync_job_roles_from_jobs():
+    role_candidates = set()
+
+    for field in ("title", "job_title", "role"):
+        try:
+            values = jobs_collection.distinct(field)
+        except Exception:
+            values = []
+
+        for value in values:
+            if isinstance(value, str):
+                cleaned = value.strip()
+                if cleaned:
+                    role_candidates.add(cleaned)
+
+    if not role_candidates:
+        return
+
+    existing_docs = job_roles_collection.find({}, {"name": 1})
+    existing_by_lower = {
+        (item.get("name") or "").strip().lower()
+        for item in existing_docs
+        if isinstance(item.get("name"), str) and item.get("name").strip()
+    }
+
+    missing_documents = []
+    now = datetime.utcnow().isoformat()
+
+    for role_name in sorted(role_candidates, key=lambda x: x.lower()):
+        if role_name.lower() not in existing_by_lower:
+            missing_documents.append(
+                {
+                    "name": role_name,
+                    "created_by": "system",
+                    "created_at": now,
+                }
+            )
+
+    if missing_documents:
+        job_roles_collection.insert_many(missing_documents)
 
 
 # ---------------- Manual Text Matching ----------------
@@ -123,3 +175,190 @@ def explainability_history(request):
         )
 
     return Response(response)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def save_analysis_record(request):
+    payload = request.data or {}
+    document = {
+        "username": request.user.username,
+        "user_email": payload.get("user_email") or request.user.username,
+        "resume_snippet": payload.get("resume_snippet") or "",
+        "recommended_jobs": payload.get("recommended_jobs") or [],
+        "analyzed_at": payload.get("analyzed_at") or datetime.utcnow().isoformat(),
+        "created_at": datetime.utcnow().isoformat(),
+    }
+
+    inserted = analyses_collection.insert_one(document)
+    return Response({"id": str(inserted.inserted_id), "message": "Analysis saved"}, status=201)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def analysis_history(request):
+    cursor = analyses_collection.find(
+        {"username": request.user.username},
+        {
+            "username": 1,
+            "user_email": 1,
+            "resume_snippet": 1,
+            "recommended_jobs": 1,
+            "analyzed_at": 1,
+            "created_at": 1,
+        },
+    ).sort("created_at", -1).limit(100)
+
+    response = []
+    for item in cursor:
+        response.append(
+            {
+                "id": str(item.get("_id")),
+                "username": item.get("username"),
+                "user_email": item.get("user_email"),
+                "resume_snippet": item.get("resume_snippet", ""),
+                "recommended_jobs": item.get("recommended_jobs", []),
+                "analyzed_at": item.get("analyzed_at") or item.get("created_at"),
+                "created_at": item.get("created_at"),
+            }
+        )
+
+    return Response(response)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def admin_users(request):
+    if not _is_admin(request):
+        return Response({"error": "Admin access required"}, status=403)
+
+    cursor = users_collection.find(
+        {},
+        {
+            "username": 1,
+            "role": 1,
+            "created_at": 1,
+        },
+    ).sort("created_at", -1)
+
+    response = []
+    for item in cursor:
+        username = item.get("username", "")
+        response.append(
+            {
+                "id": str(item.get("_id")),
+                "username": username,
+                "email": username,
+                "name": username.split("@")[0] if "@" in username else username,
+                "role": item.get("role", "user"),
+                "created_at": item.get("created_at"),
+            }
+        )
+
+    return Response(response)
+
+
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def admin_delete_user(request, username):
+    if not _is_admin(request):
+        return Response({"error": "Admin access required"}, status=403)
+
+    if username == request.user.username:
+        return Response({"error": "Cannot delete currently authenticated admin"}, status=400)
+
+    delete_user_result = users_collection.delete_one({"username": username})
+    analyses_collection.delete_many({"username": username})
+    explainability_collection.delete_many({"username": username})
+
+    if delete_user_result.deleted_count == 0:
+        return Response({"error": "User not found"}, status=404)
+
+    return Response({"message": "User deleted"})
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def admin_analyses(request):
+    if not _is_admin(request):
+        return Response({"error": "Admin access required"}, status=403)
+
+    cursor = analyses_collection.find(
+        {},
+        {
+            "username": 1,
+            "user_email": 1,
+            "resume_snippet": 1,
+            "recommended_jobs": 1,
+            "analyzed_at": 1,
+            "created_at": 1,
+        },
+    ).sort("created_at", -1).limit(500)
+
+    response = []
+    for item in cursor:
+        response.append(
+            {
+                "id": str(item.get("_id")),
+                "username": item.get("username"),
+                "user_email": item.get("user_email") or item.get("username"),
+                "resume_snippet": item.get("resume_snippet", ""),
+                "recommended_jobs": item.get("recommended_jobs", []),
+                "analyzed_at": item.get("analyzed_at") or item.get("created_at"),
+                "created_at": item.get("created_at"),
+            }
+        )
+
+    return Response(response)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def list_job_roles(request):
+    _sync_job_roles_from_jobs()
+
+    roles = sorted(
+        {
+            (item.get("name") or "").strip()
+            for item in job_roles_collection.find({}, {"name": 1})
+            if isinstance(item.get("name"), str) and item.get("name").strip()
+        },
+        key=lambda x: x.lower(),
+    )
+    return Response({"roles": roles, "count": len(roles)})
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def add_job_role(request):
+    role_name = (request.data.get("name") or "").strip()
+
+    if not role_name:
+        return Response({"error": "Role name is required"}, status=400)
+
+    existing = job_roles_collection.find_one({"name": {"$regex": f"^{role_name}$", "$options": "i"}})
+    if existing:
+        return Response({"error": "Role already exists"}, status=409)
+
+    inserted = job_roles_collection.insert_one(
+        {
+            "name": role_name,
+            "created_by": request.user.username,
+            "created_at": datetime.utcnow().isoformat(),
+        }
+    )
+    return Response({"id": str(inserted.inserted_id), "name": role_name, "message": "Role added"}, status=201)
+
+
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def delete_job_role(request, role_name):
+    cleaned = (role_name or "").strip()
+    if not cleaned:
+        return Response({"error": "Role name is required"}, status=400)
+
+    deleted = job_roles_collection.delete_one({"name": {"$regex": f"^{cleaned}$", "$options": "i"}})
+    if deleted.deleted_count == 0:
+        return Response({"error": "Role not found"}, status=404)
+
+    return Response({"message": "Role deleted"})

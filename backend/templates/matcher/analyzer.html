@@ -1,0 +1,20 @@
+{% extends 'matcher/base.html' %}
+{% block content %}
+<section class="wide-page">
+  <article class="glass-card section-card">
+    <h1>Resume Analyzer</h1>
+    <p class="muted">Paste resume text or upload a PDF to rank the top matching roles.</p>
+
+    <div class="form-stack mt-2">
+      <label>Resume Text</label>
+      <textarea id="resume-text" class="soft-input" rows="9" placeholder="Example: Python developer with Django and machine learning experience..."></textarea>
+
+      <label>Or Upload Resume PDF</label>
+      <input id="resume-file" class="soft-input" type="file" accept="application/pdf" />
+
+      <p id="analyzer-error" class="error hidden"></p>
+      <button class="cta-btn" id="analyze-btn" type="button">Analyze Resume</button>
+    </div>
+  </article>
+</section>
+{% endblock %}

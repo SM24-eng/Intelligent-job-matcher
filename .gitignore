@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Environment files
+.env
+.env.*
+
+# Logs and local artifacts
+*.log
+.DS_Store
+Thumbs.db
+
+# Node (if frontend tooling is reintroduced)
+node_modules/
