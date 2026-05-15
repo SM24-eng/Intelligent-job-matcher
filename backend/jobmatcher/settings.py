@@ -16,9 +16,10 @@ SECRET_KEY = "django-insecure-$ztrp!hml-gx4+tt+_cj%^y!wcbw#-az(o_2wnmfd=)i_hioa&
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-    "testserver",
+    'localhost',
+    '127.0.0.1',
+    'testserver',
+    'intelligent-job-matcher-2243.onrender.com'
 ]
 
 
